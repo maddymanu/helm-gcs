@@ -1,14 +1,11 @@
 package gcs
 
 import (
-	"context"
-	"net/url"
-	"os"
-
 	"cloud.google.com/go/storage"
+	"context"
 	"github.com/pkg/errors"
-	"golang.org/x/oauth2"
 	"google.golang.org/api/option"
+	"net/url"
 )
 
 // NewClient creates a new gcs client.
@@ -16,13 +13,13 @@ import (
 // Ignores ADC or serviceAccount when GOOGLE_OAUTH_ACCESS_TOKEN env variable is exported.
 func NewClient(serviceAccountPath string) (*storage.Client, error) {
 	opts := []option.ClientOption{}
-	token := os.Getenv("GOOGLE_OAUTH_ACCESS_TOKEN")
-	if token != "" {
-		token := &oauth2.Token{AccessToken: token}
-		opts = append(opts, option.WithTokenSource(oauth2.StaticTokenSource(token)))
-	} else if serviceAccountPath != "" {
-		opts = append(opts, option.WithCredentialsFile(serviceAccountPath))
-	}
+	//token := os.Getenv("GOOGLE_OAUTH_ACCESS_TOKEN")
+	//if token != "" {
+	//	token := &oauth2.Token{AccessToken: token}
+	//	opts = append(opts, option.WithTokenSource(oauth2.StaticTokenSource(token)))
+	//} else if serviceAccountPath != "" {
+	opts = append(opts, option.WithoutAuthentication())
+	//}
 	client, err := storage.NewClient(context.Background(), opts...)
 	if err != nil {
 		return nil, errors.Wrap(err, "new client")
